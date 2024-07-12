@@ -1,6 +1,6 @@
 import traceback
 from django.db import OperationalError, transaction
-from openea.utils import DEFAULT_ACLS, OBJECT_TYPES_REGISTRY
+from openea.constants import DEFAULT_ACLS, OBJECT_TYPES_REGISTRY
 
 from authorization.models import AccessPermission, Permission, SecurityGroup
 

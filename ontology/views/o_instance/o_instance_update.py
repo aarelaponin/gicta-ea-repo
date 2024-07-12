@@ -6,8 +6,8 @@ from django.utils import timezone
 from django.contrib.auth.mixins import LoginRequiredMixin
 from ontology.forms.o_instance.o_instance_update import OInstanceUpdateForm
 from ontology.models import OInstance, OPredicate, OSlot
-from openea.utils import Utils
-from openea.utils import Utils
+from openea.constants import Utils
+from openea.constants import Utils
 from utils.views.custom import SingleObjectView
 
 

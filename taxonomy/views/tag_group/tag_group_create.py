@@ -4,7 +4,7 @@ from django.urls import reverse_lazy, reverse
 
 from taxonomy.models import TagGroup
 from django.contrib.auth.mixins import LoginRequiredMixin
-from openea.utils import Utils
+from openea.constants import Utils
 
 
 class TagGroupCreateView(LoginRequiredMixin, CustomCreateView):

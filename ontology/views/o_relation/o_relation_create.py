@@ -7,7 +7,7 @@ from django.core.exceptions import SuspiciousOperation
 from django.contrib.auth.mixins import LoginRequiredMixin
 from ontology.forms.o_relation.o_relation_create import ORelationCreateForm
 from ontology.models import ORelation
-from openea.utils import Utils
+from openea.constants import Utils
 
 class ORelationCreateView(LoginRequiredMixin, CustomCreateView):
     model = ORelation

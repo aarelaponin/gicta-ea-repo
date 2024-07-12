@@ -2,7 +2,7 @@ from django.views.generic import ListView
 
 from taxonomy.models import TagGroup
 from django.contrib.auth.mixins import LoginRequiredMixin
-from openea.utils import Utils
+from openea.constants import Utils
 
 class TagGroupListView(LoginRequiredMixin, ListView):
     model = TagGroup

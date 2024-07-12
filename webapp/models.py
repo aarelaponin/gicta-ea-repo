@@ -1,3 +1,3 @@
 from django.db import models
 
-from openea.utils import Utils
+from openea.constants import Utils

@@ -1,7 +1,7 @@
 from django.views.generic import ListView
 
 from django.contrib.auth.mixins import LoginRequiredMixin
-from openea.utils import Utils
+from openea.constants import Utils
 from utils.views.custom import MultipleObjectsView
 
 from organisation.models import Task

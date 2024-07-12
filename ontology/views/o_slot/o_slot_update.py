@@ -7,7 +7,7 @@ from ontology.forms.o_slot.o_slot_update import OSlotUpdateForm
 from django.views.generic.edit import FormView
 
 from ontology.models import OInstance, OSlot, OPredicate, OSlot
-from openea.utils import Utils
+from openea.constants import Utils
 from utils.views.custom import SingleObjectView
 
 class OSlotUpdateView(LoginRequiredMixin, SingleObjectView, FormView):

@@ -5,7 +5,7 @@ from django.urls import reverse_lazy, reverse
 from django.contrib.auth.mixins import LoginRequiredMixin
 
 from organisation.models import Profile
-from openea.utils import Utils
+from openea.constants import Utils
 
 class ProfileCreateView(LoginRequiredMixin, CustomCreateView):
     model = Profile

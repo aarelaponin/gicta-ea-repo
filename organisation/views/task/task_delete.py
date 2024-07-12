@@ -2,7 +2,7 @@ from django.views.generic.edit import DeleteView
 from django.urls import reverse_lazy, reverse
 
 from django.contrib.auth.mixins import LoginRequiredMixin
-from openea.utils import Utils
+from openea.constants import Utils
 from utils.views.custom import SingleObjectView
 
 from organisation.models import Task

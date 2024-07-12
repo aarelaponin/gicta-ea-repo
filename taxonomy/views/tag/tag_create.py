@@ -1,7 +1,7 @@
 from utils.views.custom import CustomCreateView
 from django.urls import reverse_lazy, reverse
 from taxonomy.models import Tag
-from openea.utils import Utils
+from openea.constants import Utils
 from django.contrib.auth.mixins import LoginRequiredMixin
 
 

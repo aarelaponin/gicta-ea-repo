@@ -5,7 +5,7 @@ from pagedown.widgets import PagedownWidget
 from ontology.controllers.utils import KnowledgeBaseUtils
 from ontology.models import (OConcept, OInstance, OModel, OPredicate,
                              ORelation, OSlot)
-from openea.utils import Utils
+from openea.constants import Utils
 
 
 class OInstanceUpdateForm(forms.ModelForm):

@@ -9,7 +9,7 @@ from django.views.generic.edit import FormView
 
 from ontology.models import OConcept, OInstance, OPredicate, OSlot
 from utils.views.custom import ReferrerView
-from openea.utils import Utils
+from openea.constants import Utils
 
 class OSlotCreateView(LoginRequiredMixin, ReferrerView, FormView):
     model = OSlot

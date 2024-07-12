@@ -2,7 +2,7 @@ from django.views.generic import ListView
 
 from configuration.models import Configuration
 from django.contrib.auth.mixins import LoginRequiredMixin
-from openea.utils import Utils
+from openea.constants import Utils
 
 class ConfigurationListView(LoginRequiredMixin, ListView):
     model = Configuration

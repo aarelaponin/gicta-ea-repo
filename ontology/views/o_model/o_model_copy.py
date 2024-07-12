@@ -9,7 +9,7 @@ from django.views.generic import View
 
 from ontology.controllers.o_model import ModelUtils
 from ontology.models import OConcept, OInstance, OModel, OPredicate, ORelation
-from openea.utils import Utils
+from openea.constants import Utils
 
 from utils.views.custom import ReferrerView
 

@@ -1,7 +1,7 @@
 
 from django.contrib.auth.mixins import LoginRequiredMixin
 from organisation.controllers.profile import ProfileController
-from openea.utils import Utils
+from openea.constants import Utils
 from utils.views.custom import SingleObjectView
 from organisation.models import Profile
 

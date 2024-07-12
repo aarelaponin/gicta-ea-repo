@@ -2,7 +2,7 @@ from django.views.generic import DetailView
 
 from taxonomy.models import Tag
 from django.contrib.auth.mixins import LoginRequiredMixin
-from openea.utils import Utils
+from openea.constants import Utils
 
 class TagDetailView(LoginRequiredMixin, DetailView):
     model = Tag

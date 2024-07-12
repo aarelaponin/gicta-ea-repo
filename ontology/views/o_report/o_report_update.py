@@ -5,7 +5,7 @@ from django.urls import reverse_lazy, reverse
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.utils import timezone
 from ontology.models import OReport
-from openea.utils import Utils
+from openea.constants import Utils
 from utils.views.custom import SingleObjectView
 
 class OReportUpdateView(LoginRequiredMixin, SingleObjectView, UpdateView):

@@ -12,7 +12,7 @@ from ontology.controllers.graphviz import GraphvizController
 from ontology.controllers.o_model import ModelUtils
 from ontology.models import OConcept, OInstance, OModel, OPredicate, ORelation
 from ontology.plugins.json import GenericEncoder
-from openea.utils import Utils
+from openea.constants import Utils
 
 
 class OModelImpactAnalysisView(LoginRequiredMixin, View):

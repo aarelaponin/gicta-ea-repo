@@ -1,12 +1,12 @@
 from django.views.generic import DetailView
 
 from django.contrib.auth.mixins import LoginRequiredMixin
-from openea.utils import Utils
+from openea.constants import Utils
 
 from utils.views.custom import SingleObjectView
 
 from organisation.models import Profile
-from openea.utils import Utils
+from openea.constants import Utils
 
 class ProfileDetailView(LoginRequiredMixin, SingleObjectView, DetailView):
     model = Profile

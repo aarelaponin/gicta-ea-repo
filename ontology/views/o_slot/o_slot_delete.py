@@ -7,7 +7,7 @@ from django.urls import reverse_lazy, reverse
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.exceptions import PermissionDenied
 from ontology.models import OConcept, OSlot
-from openea.utils import Utils
+from openea.constants import Utils
 from utils.views.custom import SingleObjectView
 
 class OSlotDeleteView(LoginRequiredMixin, SingleObjectView, DeleteView):

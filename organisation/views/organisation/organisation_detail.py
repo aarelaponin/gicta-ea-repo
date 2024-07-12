@@ -4,9 +4,9 @@ from django.views.generic import DetailView
 from django.core.paginator import Paginator
 from django.contrib.auth.mixins import LoginRequiredMixin
 from configuration.models import Configuration
-from openea.utils import Utils
+from openea.constants import Utils
 from taxonomy.models import Tag, TagGroup
-from openea.utils import Utils
+from openea.constants import Utils
 from utils.views.custom import SingleObjectView
 
 from organisation.models import Organisation, Profile, Task

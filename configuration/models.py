@@ -1,7 +1,7 @@
 import uuid
 from django.db import models
 
-from openea.utils import Utils
+from openea.constants import Utils
 from organisation.models import Organisation
 from utils.generic import GenericModel
 

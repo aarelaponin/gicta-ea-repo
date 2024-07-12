@@ -7,7 +7,7 @@ from django.views.generic.edit import FormView
 
 from ontology.forms.o_instance.o_instance_create import OInstanceCreateForm
 from ontology.models import OConcept, OInstance, OModel
-from openea.utils import Utils
+from openea.constants import Utils
 
 
 class OInstanceCreateView(LoginRequiredMixin, FormView):

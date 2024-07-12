@@ -4,7 +4,7 @@ from django.core.paginator import Paginator
 
 from django.contrib.auth.mixins import LoginRequiredMixin
 from taxonomy.models import TagGroup, Tag
-from openea.utils import Utils
+from openea.constants import Utils
 
 class TagGroupDetailView(LoginRequiredMixin, DetailView):
     model = TagGroup

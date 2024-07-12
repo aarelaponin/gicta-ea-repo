@@ -5,7 +5,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from ontology.forms.o_relation.o_relation_update import ORelationUpdateForm
 from django.utils import timezone
 from ontology.models import ORelation
-from openea.utils import Utils
+from openea.constants import Utils
 from utils.views.custom import SingleObjectView
 
 class ORelationUpdateView(LoginRequiredMixin, SingleObjectView, UpdateView):

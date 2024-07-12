@@ -8,7 +8,7 @@ from authorization.models import Permission
 from ontology.controllers.utils import KnowledgeBaseUtils
 from ontology.models import (OConcept, OInstance, OModel, OPredicate,
                              ORelation, OReport, OSlot)
-from openea.utils import Utils
+from openea.constants import Utils
 
 DEFAULT_MAX_LEVEL = 100
 

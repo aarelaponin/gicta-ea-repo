@@ -7,7 +7,7 @@ from django.http import HttpResponseForbidden, HttpResponseRedirect
 from ontology.forms.repository.repository_create import RepositoryCreateForm
 
 from ontology.models import Repository
-from openea.utils import Utils
+from openea.constants import Utils
 class RepositoryCreateView(LoginRequiredMixin, CustomCreateView):
     model = Repository
     template_name = "repository/repository_create.html"

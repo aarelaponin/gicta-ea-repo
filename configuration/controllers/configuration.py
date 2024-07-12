@@ -1,6 +1,6 @@
 from configuration.models import Setting
 from ontology.models import OConcept
-from openea.utils import Utils
+from openea.constants import Utils
 
 
 class ConfigutationController():

@@ -5,7 +5,7 @@ from authorization.models import AccessPermission, Permission, SecurityGroup
 
 from django.contrib.auth.mixins import LoginRequiredMixin
 from organisation.models import Profile
-from openea.utils import Utils
+from openea.constants import Utils
 
 class SecurityGroupDetailView(LoginRequiredMixin, DetailView):
     model = SecurityGroup

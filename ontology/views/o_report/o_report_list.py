@@ -3,7 +3,7 @@ from django.views.generic import ListView
 from django.contrib.auth.mixins import LoginRequiredMixin
 
 from ontology.models import OReport
-from openea.utils import Utils
+from openea.constants import Utils
 from utils.views.custom import MultipleObjectsView
 
 class OReportListView(LoginRequiredMixin, MultipleObjectsView, ListView):

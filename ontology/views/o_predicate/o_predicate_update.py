@@ -5,7 +5,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from ontology.forms.o_predicate.o_predicate_update import OPredicateUpdateForm
 from django.utils import timezone
 from ontology.models import OPredicate
-from openea.utils import Utils
+from openea.constants import Utils
 from utils.views.custom import SingleObjectView
 
 class OPredicateUpdateView(LoginRequiredMixin, SingleObjectView, UpdateView):

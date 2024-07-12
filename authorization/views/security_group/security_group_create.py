@@ -5,7 +5,7 @@ from django.urls import reverse_lazy, reverse
 from authorization.models import SecurityGroup
 
 from django.contrib.auth.mixins import LoginRequiredMixin
-from openea.utils import Utils
+from openea.constants import Utils
 
 
 class SecurityGroupCreateView(LoginRequiredMixin, CustomCreateView):

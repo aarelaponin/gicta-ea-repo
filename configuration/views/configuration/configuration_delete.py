@@ -3,7 +3,7 @@ from django.urls import reverse_lazy, reverse
 
 from configuration.models import Configuration
 from django.contrib.auth.mixins import LoginRequiredMixin
-from openea.utils import Utils
+from openea.constants import Utils
 
 
 class ConfigurationDeleteView(LoginRequiredMixin, DeleteView):

@@ -5,7 +5,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from ontology.forms.o_model.o_model_update import OModelUpdateForm
 from django.utils import timezone
 from ontology.models import OModel
-from openea.utils import Utils
+from openea.constants import Utils
 from utils.views.custom import SingleObjectView
 
 class OModelUpdateView(LoginRequiredMixin, SingleObjectView, UpdateView):

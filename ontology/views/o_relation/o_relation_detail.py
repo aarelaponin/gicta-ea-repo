@@ -3,7 +3,7 @@ from django.http import Http404
 from django.views.generic import DetailView
 
 from ontology.models import OPredicate, ORelation
-from openea.utils import Utils
+from openea.constants import Utils
 from utils.views.custom import SingleObjectView
 
 

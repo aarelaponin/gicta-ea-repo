@@ -8,7 +8,7 @@ from django.core.exceptions import SuspiciousOperation
 from django.contrib.auth.mixins import LoginRequiredMixin
 from ontology.forms.o_model.o_model_create import OModelCreateForm
 from ontology.models import OModel
-from openea.utils import Utils
+from openea.constants import Utils
 
 class OModelCreateView(LoginRequiredMixin, CustomCreateView):
     model = OModel

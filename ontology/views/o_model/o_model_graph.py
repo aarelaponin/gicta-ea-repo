@@ -8,7 +8,7 @@ from django.views import View
 from ontology.controllers.graphviz import GraphvizController
 from ontology.controllers.o_model import ModelUtils
 from ontology.models import OModel
-from openea.utils import Utils
+from openea.constants import Utils
 from utils.views.custom import SingleObjectView
 
 

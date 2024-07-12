@@ -5,7 +5,7 @@ from authorization.forms.accesspermission.accesspermission_create import AccessP
 from authorization.models import AccessPermission
 
 from django.contrib.auth.mixins import LoginRequiredMixin
-from openea.utils import Utils
+from openea.constants import Utils
 
 
 class AccessPermissionCreateView(LoginRequiredMixin, CustomCreateView):

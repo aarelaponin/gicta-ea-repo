@@ -3,7 +3,7 @@ from django.views.generic import ListView
 from authorization.models import AccessPermission
 
 from django.contrib.auth.mixins import LoginRequiredMixin
-from openea.utils import Utils
+from openea.constants import Utils
 
 class AccessPermissionListView(LoginRequiredMixin, ListView):
     model = AccessPermission

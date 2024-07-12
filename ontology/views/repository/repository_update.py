@@ -6,7 +6,7 @@ from django.http import HttpResponseForbidden, HttpResponseRedirect
 from ontology.forms.repository.repository_update import RepositoryUpdateForm
 from django.utils import timezone
 from ontology.models import Repository
-from openea.utils import Utils
+from openea.constants import Utils
 from utils.views.custom import SingleObjectView
 
 class RepositoryUpdateView(LoginRequiredMixin, SingleObjectView, UpdateView):

@@ -11,7 +11,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 
 from ontology.controllers.knowledge_base import KnowledgeBaseController
 from ontology.models import OModel, OConcept, ORelation, OPredicate
-from openea.utils import Utils
+from openea.constants import Utils
 
 
 class OModelReportView(LoginRequiredMixin, DetailView):

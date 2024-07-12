@@ -3,7 +3,7 @@ from django.views.generic import ListView
 from taxonomy.models import Tag
 
 from django.contrib.auth.mixins import LoginRequiredMixin
-from openea.utils import Utils
+from openea.constants import Utils
 from utils.views.custom import MultipleObjectsView
 
 class TagListView(LoginRequiredMixin, MultipleObjectsView, ListView):

@@ -5,7 +5,7 @@ from authorization.controllers.utils import create_security_group_with_permissio
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.utils.translation import gettext as _
 from organisation.models import Organisation
-from openea.utils import Utils
+from openea.constants import Utils
 
 class OrganisationCreateView(LoginRequiredMixin, CustomCreateView):
     model = Organisation

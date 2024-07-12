@@ -5,7 +5,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 
 
 from ontology.models import Repository
-from openea.utils import Utils
+from openea.constants import Utils
 from utils.views.custom import SingleObjectView
 
 class RepositoryDeleteView(LoginRequiredMixin, SingleObjectView, DeleteView):

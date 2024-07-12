@@ -4,7 +4,7 @@ from django.urls import reverse_lazy
 from django.views.generic.edit import DeleteView
 
 from organisation.models import Organisation
-from openea.utils import Utils
+from openea.constants import Utils
 from utils.views.custom import SingleObjectView
 
 

@@ -2,7 +2,7 @@ from django.views.generic import DetailView
 
 from authorization.models import Permission
 from django.contrib.auth.mixins import LoginRequiredMixin
-from openea.utils import Utils
+from openea.constants import Utils
 
 class PermissionDetailView(LoginRequiredMixin, DetailView):
     model = Permission

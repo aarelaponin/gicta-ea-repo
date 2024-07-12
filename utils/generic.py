@@ -1,7 +1,7 @@
 from django.utils import timezone
 
 from log.middleware.request import get_request
-from openea.utils import Utils
+from openea.constants import Utils
 
 
 def set_system_fields(obj, user, delete=False):
@@ -22,7 +22,7 @@ def get_or_none(model, *args, **kwargs):
     
 class GenericModel:
     def __init_subclass__(cls, **kwargs):
-        from openea.utils import OBJECT_TYPES_REGISTRY
+        from openea.constants import OBJECT_TYPES_REGISTRY
         OBJECT_TYPES_REGISTRY[cls.get_object_type()] = cls
         super().__init_subclass__(**kwargs)
     

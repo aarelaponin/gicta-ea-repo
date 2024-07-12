@@ -4,7 +4,7 @@ from django.views import View
 from django.contrib.auth.mixins import LoginRequiredMixin
 
 from ontology.models import OInstance, OSlot
-from openea.utils import Utils
+from openea.constants import Utils
 
 class OInstanceJSONListView(LoginRequiredMixin, View):
     model = OInstance
