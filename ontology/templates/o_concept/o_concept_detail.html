@@ -77,9 +77,15 @@
     $(document).ready(function(){
       $("#search-instances").on("keyup", function() {
         var value = $(this).val().toLowerCase();
-        $("#table-instances tr").filter(function() {
-          $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+        var total_selected = 0;
+        $("#table-instances tbody tr").filter(function() {
+          $(this).hide();
+          if ($(this).text().toLowerCase().indexOf(value) > -1){
+              total_selected = total_selected + 1;
+              $(this).show();
+          }
         });
+        $("#table-instances thead .total_display").text(total_selected);
       });
     });
 </script>
