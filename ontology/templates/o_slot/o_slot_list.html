@@ -9,16 +9,14 @@
     <thead>
         <tr>
             <th>{% trans "Slot" %}</th>
-            <th>{% trans "View" %}</th>
             <th></th>
-            <th></th>
+            <th class="total_display text-muted">{{ object_list|length }}</th>
         </tr>
     </thead>
     <tbody>
         {% for OSlot in object_list %}
         <tr>
-            <td>{{ OSlot }}</td>
-            <td><a href="{% url "o_slot_detail" OSlot.id %}">{% trans "view" %}</a></td>
+            <td><a href="{% url "o_slot_detail" OSlot.id %}">{{ OSlot }}</a></td>
             <td><a href="{% url "o_slot_update" OSlot.id %}"><i class="far fa-edit"></i></a></td>
             <td><a href="{% url "o_slot_delete" OSlot.id %}"><i class="fa fa-remove"></i></a></td>
         </tr>

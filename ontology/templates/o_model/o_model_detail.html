@@ -240,29 +240,20 @@
     const modelId = window.location.pathname.split('/')[3];
 
     $(document).ready(function(){
-        $("#search-reports").on("keyup", function() {
-          var value = $(this).val().toLowerCase();
-          $("#table-reports tr").filter(function() {
-            $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
-          });
-        });
-        $("#search-concepts").on("keyup", function() {
-          var value = $(this).val().toLowerCase();
-          $("#table-concepts tr").filter(function() {
-            $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
-          });
-        });
-        $("#search-relations").on("keyup", function() {
-          var value = $(this).val().toLowerCase();
-          $("#table-relations tr").filter(function() {
-            $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
-          });
-        });
-        $("#search-predicates").on("keyup", function() {
-          var value = $(this).val().toLowerCase();
-          $("#table-predicates tr").filter(function() {
-            $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
-          });
+        var tables_ids = ["reports", "concepts", "relations", "predicates"];
+        tables_ids.forEach(function(item) {
+            $("#search-"+item).on("keyup", function() {
+                var value = $(this).val().toLowerCase();
+                var total_selected = 0;
+                $("#table-"+item + " tbody tr").filter(function() {
+                    $(this).hide();
+                    if ($(this).text().toLowerCase().indexOf(value) > -1){
+                        total_selected = total_selected + 1;
+                        $(this).show();
+                    }
+                });
+                $("#table-"+item+" thead .total_display").text(total_selected);
+            });
         });
 
         $('#model-gap-select').select2();

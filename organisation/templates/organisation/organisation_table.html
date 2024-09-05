@@ -1,0 +1,19 @@
+{% load i18n %}
+<table class="table table-fluid table-hover">
+    <thead>
+        <tr>
+            <th>{% trans "Organisation" %}</th>
+            <th></th>
+            <th class="total_display text-muted">{{ object_list|length }}</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for Organisation in object_list %}
+        <tr>
+            <td><a href="{% url "organisation_detail" Organisation.id %}">{{ Organisation }}</a></td>
+            <td><a href="{% url "organisation_update" Organisation.id %}"><i class="far fa-edit"></i></a></td>
+            <td><a href="{% url "organisation_delete" Organisation.id %}"><i class="fa fa-remove"></i></a></td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>

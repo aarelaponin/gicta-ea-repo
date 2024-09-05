@@ -56,24 +56,7 @@
 
     <div class="tab-pane fade show active" id="nav-repositories" role="tabpanel" aria-labelledby="nav-repositories-tab">
         <div class="mt-3"><a class="btn btn-primary" href="{% url "repository_create_organisation" organisation_id=object.id %}">{% trans "New Repository" %}</a></div>
-        <table class="table table-fluid table-hover">
-            <thead>
-                <tr>
-                    <th>{% trans "Repository" %}</th>
-                    <th></th>
-                    <th></th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for Repository in repositories %}
-                <tr>
-                    <td><a class="link-dark" href="{% url "repository_detail" Repository.id %}">{{ Repository }}</a></td>
-                    <td><a href="{% url "repository_update" Repository.id %}"><i class="far fa-edit"></i></a></td>
-                    <td><a href="{% url "repository_delete" Repository.id %}"><i class="fa fa-remove"></i></a></td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
+        {% include "repository/repository_table.html" with object_list=repositories %}
 
         <nav aria-label="Page navigation example">
             <ul class="pagination justify-content-center">
