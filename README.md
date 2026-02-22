@@ -1,20 +1,40 @@
-# openea
-Enterprise-grade Enterprise Architecture tool based on ontology engine
+# GICTA Enterprise Architecture Repository
 
+Enterprise Architecture tool for the Gambia Information and Communications Technology Agency (GICTA), based on the OpenEA ontology engine.
 
 ![Default Home View](webapp/static/img/openea.svg?raw=true "Diagram view")
 
-## Main features
+## Overview
 
-* Web based enterprise architecture tool
-* Ontology engine and research tool
-* Tailored metamodel for your organisation
-* Dynamic visualization
-* Custom reports on knowledge base
-* Model exchange
-* Custom Plugin development
+This repository contains the Enterprise Architecture (EA) tool customized for GICTA, implementing the Gambia National EA Metamodel. The tool enables modeling, visualization, and analysis of enterprise architecture across government organizations.
 
-* SQLite by default if no env variable is set
+## Main Features
+
+* Web-based enterprise architecture modeling and visualization
+* Gambia National EA Metamodel with 40 predefined concepts across 7 domains
+* Dynamic graph visualization and impact analysis
+* Custom HTML/JavaScript reports on the knowledge base
+* Model import/export (JSON, Excel, XML)
+* REST API and GraphQL endpoints for integration
+* Multi-tenant architecture with role-based access control
+
+## Gambia EA Metamodel
+
+The metamodel covers 7 architectural domains:
+
+| Domain | Concepts |
+|--------|----------|
+| **Strategy** | Vision, Goal, Objective, Initiative |
+| **Service** | BusinessService, SupportService |
+| **Business** | Customer, BusinessProcess, Workflow, Capability, OrganisationUnit, Role, Actor |
+| **Application** | Application, ApplicationComponent, ApplicationFunction, ApplicationService |
+| **Data** | DataEntity, DataObject, InformationFlow, DataDomain |
+| **Technology** | TechnologyComponent, Server, Network, Location, Deployment, Vendor, ITCapability |
+| **Investment** | Project, Demand, Budget |
+
+See [docs/Gambia_EA_Metamodel_Reference_v1_0.md](docs/Gambia_EA_Metamodel_Reference_v1_0.md) for full documentation.
+
+## Screenshots
 
 ### Graph View
 ![Graph View](webapp/static/img/OpenEA_graph.png?raw=true "Graph view")
@@ -28,52 +48,126 @@ Enterprise-grade Enterprise Architecture tool based on ontology engine
 ### Custom HTML/Javascript Reports
 ![Custom Report](webapp/static/img/OpenEA_map.png?raw=true "Custom Reporting")
 
-# Usage
+## Getting Started
 
-## Getting Started with project
+### Prerequisites
 
-First clone the repository from Github and switch to the new directory:
+* Python 3.10+ (tested with Python 3.13)
+* pip
 
-    $ git clone git@github.com/USERNAME/openea.git
-    $ cd openea
-    
-Activate the virtualenv for your project.
-    
-Install project dependencies:
+### Installation
 
-    $ pip install -r requirements.txt
-    
-    
-Then simply apply the migrations:
+Clone the repository:
 
-    $ python manage.py migrate
-    
+```bash
+git clone https://github.com/aarelaponin/gicta-ea-repo.git
+cd gicta-ea-repo
+```
 
-You can now run the development server:
+Create and activate a virtual environment:
 
-    $ python manage.py runserver
+```bash
+python -m venv venv
+source venv/bin/activate  # On Windows: venv\Scripts\activate
+```
 
-And access the application at http://localhost:8000/
+Install dependencies:
 
-## Creating your organisation with admin rights
+```bash
+pip install -r requirements.txt
+```
 
-Register and create your organisation with your username as admin
+Apply database migrations:
 
-    $ python manage.py create_organisation <organisation_name> --users <username>
+```bash
+python manage.py migrate
+```
 
-## Navigating the interface
+Create a superuser:
 
-To display the repositories, click on your user at the top right, then on "Repositories".
+```bash
+python manage.py createsuperuser
+```
 
-Under the "Relations" tab, create at least the relation has the property
-Under the "Concepts" tab, start by creating the concepts (boxes), Ex: fruit, color
-under the "Ontology" tab, create the Concept-Relation-Concept links, Ex: fruits - has for property - color
-You are ready to create the instances.
+Create your organization and link your user:
 
-To create an instance:
-Under the "Concepts" tab, select the concept of the instance you want to create
-Then click on "New instance", fill in the form and save.
+```bash
+python manage.py create_organisation gicta --users <your_username>
+```
 
-Click on the instance to view it.
-You can edit the relationships between instances from the instance view page, Ex: apple - has property - red
-You can view all instances under the "Instances" tab
+Populate the Gambia EA Metamodel:
+
+```bash
+python manage.py populate_gambia_metamodel --org gicta
+```
+
+Run the development server:
+
+```bash
+python manage.py runserver
+```
+
+Access the application at http://localhost:8000/
+
+## Configuration
+
+Key configuration files:
+
+* `config.ini` - Application settings (database, email, graph limits)
+* `openea/settings.py` - Django settings
+
+See [docs/OpenEA_Configuration_Guide.md](docs/OpenEA_Configuration_Guide.md) for comprehensive configuration documentation.
+
+## Usage
+
+### Creating a Repository
+
+1. Log in and click on your username at the top right
+2. Select "Repositories"
+3. Click "New Repository" and fill in the details
+
+### Working with the Metamodel
+
+After populating the Gambia EA Metamodel:
+
+1. Create a new Model within your Repository
+2. The predefined concepts (Application, Server, etc.) are available
+3. Create instances of these concepts (e.g., a specific application)
+4. Define relationships between instances using slots
+
+### Visualizing Architecture
+
+* **Graph View** - Visual network of relationships between instances
+* **Impact Analysis** - Trace dependencies from any instance
+* **Gap Analysis** - Compare models to identify differences
+
+## API Access
+
+### REST API
+
+Base URL: `/api/rest/`
+
+```bash
+# Get JWT token
+curl -X POST http://localhost:8000/api/token/ \
+  -H "Content-Type: application/json" \
+  -d '{"username":"admin","password":"yourpassword"}'
+
+# List models
+curl -H "Authorization: Bearer <token>" http://localhost:8000/api/rest/models/
+```
+
+### GraphQL
+
+Endpoint: `/api/graphql`
+
+GraphiQL interface available for interactive queries.
+
+## Documentation
+
+* [Configuration Guide](docs/OpenEA_Configuration_Guide.md) - Comprehensive configuration reference
+* [Gambia EA Metamodel](docs/Gambia_EA_Metamodel_Reference_v1_0.md) - Metamodel specification
+
+## License
+
+Based on [OpenEA](https://github.com/AGLA-Information-Systems/openea) by AGLA Information Systems.
