@@ -47,7 +47,7 @@ class GraphvizController:
                                     'fontcolor': '#212529'})
         
         if knowledge_set == 'ontology':
-            GraphvizController.render_ontology (dot, node_colors=node_colors, slots_data=model_data['predicates'])
+            GraphvizController.render_ontology (dot, node_colors=node_colors, predicates_data=model_data['predicates'])
         elif knowledge_set == 'instances':
             GraphvizController.render_instances (dot, node_colors=node_colors, slots_data=model_data['slots'])
         
@@ -58,9 +58,10 @@ class GraphvizController:
     def render_ontology (dot, node_colors, predicates_data):
         nbr_edges = 0
         for predicate in predicates_data:
-            node_color = GraphvizController.get_node_color(node_colors, predicate.subject.concept.id)
+            # predicate.subject and predicate.object are OConcept objects (not OInstance)
+            node_color = GraphvizController.get_node_color(node_colors, predicate.subject.id)
             dot.node(str(predicate.subject.id), label=GraphvizController.get_concept_label(predicate.subject), href=ModelUtils.get_url('concept', predicate.subject.id), fillcolor="{}:{}".format(node_color,'white'))
-            node_color = GraphvizController.get_node_color(node_colors, predicate.object.concept.id)
+            node_color = GraphvizController.get_node_color(node_colors, predicate.object.id)
             dot.node(str(predicate.object.id), label=GraphvizController.get_concept_label(predicate.object), href=ModelUtils.get_url('concept', predicate.object.id), fillcolor="{}:{}".format(node_color,'white'))
             dot.edge(str(predicate.subject.id), str(predicate.object.id), label=GraphvizController.get_relation_label(predicate.relation), href=ModelUtils.get_url('predicate', predicate.id))
             if nbr_edges >= settings.MAX_GRAPH_NODES:

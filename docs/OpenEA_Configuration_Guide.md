@@ -166,6 +166,19 @@ This creates all 40 concepts, 28 relationships, and 70 predicate rules.
 
 **URL:** `/model/<model_id>/graph/`
 
+**System Requirement:** Graphviz must be installed on the server.
+
+```bash
+# macOS
+brew install graphviz
+
+# Ubuntu/Debian
+sudo apt-get install graphviz
+
+# Verify installation
+dot -V
+```
+
 **Configuration:**
 - `MAX_GRAPH_NODES` - Controls complexity (default: 50)
 - `MAX_LENGTH_GRAPH_NODE_TEXT` - Label truncation (default: 30)
@@ -174,6 +187,23 @@ This creates all 40 concepts, 28 relationships, and 70 predicate rules.
 - SVG output format
 - Filter by knowledge set (ontology vs instances)
 - Interactive node exploration
+- Clickable nodes linking to detail pages
+
+**How to Use:**
+
+1. Navigate to the model detail page
+2. Click the **Graph** tab
+3. **For Ontology Graph** (shows concepts and relationships):
+   - Check the **Relations** checkbox (selects all relationship types)
+   - Check the **Predicates** checkbox (selects relationship rules)
+   - Click **"Generate Ontology Graph"**
+4. **For Instances Graph** (shows actual data):
+   - Optionally select specific **Concepts** to filter
+   - Check the **Instances** checkbox
+   - Click **"Generate Instances Graph"**
+5. Click **"Download Graph"** to save as SVG
+
+**Note:** You must select at least some filters before generating. Empty selections produce no graph.
 
 ### 4.2 Impact Analysis
 
@@ -697,6 +727,9 @@ MAX_LENGTH_GRAPH_NODE_TEXT = 50
 | Redis connection error | Switch to LocMemCache in settings.py |
 | User not found | Create user with `createsuperuser` first |
 | SQLite constraint warnings | Safe to ignore for development |
+| Graph generation 500 error | Install Graphviz: `brew install graphviz` (macOS) or `apt-get install graphviz` (Linux) |
+| Graph button does nothing | Select filters first (Relations, Predicates, Instances) before clicking Generate |
+| Slots causing errors | Ensure slots have predicates linked (run `populate_gambia_asis` after `populate_gambia_metamodel`) |
 | Package build failures (Python 3.13) | Upgrade packages (pillow>=10.4, psycopg2-binary>=2.9.9, lxml>=5.0, Markdown>=3.5) |
 
 ---

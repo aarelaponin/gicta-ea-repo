@@ -23,7 +23,7 @@ from django.core.management.base import BaseCommand, CommandError
 from django.db import transaction
 
 from ontology.models import (
-    OConcept, OInstance, OModel, OSlot, Repository
+    OConcept, OInstance, OModel, OPredicate, ORelation, OSlot, Repository
 )
 from organisation.models import Organisation
 
@@ -1174,6 +1174,12 @@ class Command(BaseCommand):
             slot_created = 0
             slot_skipped = 0
 
+            # Build predicate lookup map: (subject_concept, relation_name, object_concept) -> predicate
+            predicate_map = {}
+            for predicate in OPredicate.objects.filter(model=model):
+                key = (predicate.subject.name, predicate.relation.name, predicate.object.name)
+                predicate_map[key] = predicate
+
             for subj_concept, rel_name, obj_concept, subj_code, obj_code in SLOTS:
                 subject = instance_map.get(subj_code)
                 obj = instance_map.get(obj_code)
@@ -1193,13 +1199,26 @@ class Command(BaseCommand):
                     slot_skipped += 1
                     continue
 
+                # Look up the predicate
+                predicate_key = (subj_concept, rel_name, obj_concept)
+                predicate = predicate_map.get(predicate_key)
+                if not predicate:
+                    if verbose:
+                        self.stderr.write(
+                            f"  WARNING: Predicate '{subj_concept} {rel_name} {obj_concept}' "
+                            f"not found, skipping slot."
+                        )
+                    slot_skipped += 1
+                    continue
+
                 slot, created = OSlot.objects.get_or_create(
                     subject=subject,
-                    name=rel_name,
+                    predicate=predicate,
                     object=obj,
                     model=model,
                     organisation=organisation,
                     defaults={
+                        'name': rel_name,
                         'description': f"{subject.name} {rel_name} {obj.name}"
                     }
                 )

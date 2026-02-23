@@ -6,10 +6,18 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 OpenEA is an enterprise-grade Enterprise Architecture (EA) tool based on an ontology engine. It provides a web-based platform for organizations to model, visualize, and analyze their enterprise architecture using knowledge-based ontologies.
 
+## System Requirements
+
+- **Python**: 3.10+ (tested with 3.13)
+- **Graphviz**: Required for graph visualization (install with `brew install graphviz` on macOS)
+
 ## Build & Development Commands
 
 ```bash
-# Install dependencies
+# Install system dependencies (macOS)
+brew install graphviz
+
+# Install Python dependencies
 pip install -r requirements.txt
 
 # Run database migrations
