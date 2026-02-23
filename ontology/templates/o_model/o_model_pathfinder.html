@@ -27,6 +27,16 @@
             </dd>
           </dl>
 
+          <dl>
+            <dt>
+              {% trans "Relations" %} <small class="text-muted">({% trans "optional filter" %})</small>
+              <input id="all-relations-pathfinder-checkbox" type="checkbox" title="{% trans 'Select All' %}"/>
+            </dt>
+            <dd>
+              <select id="pathfinder-relations" multiple="multiple" class="custom-select2" style="width: 100%"></select>
+            </dd>
+          </dl>
+
         </div>
       </div>
       <div class="col-lg">
@@ -42,6 +52,15 @@
           </dl>
 
           <dl>
+            <dt>
+              <label for="pathfinder-find-all" style="font-weight: normal; cursor: pointer;">
+                <input id="pathfinder-find-all" type="checkbox" />
+                {% trans "Find all instances of this concept" %}
+              </label>
+            </dt>
+          </dl>
+
+          <dl id="pathfinder-end-instance-container">
             <dt>
               {% trans "Instance" %}
             </dt>
@@ -78,8 +97,13 @@
   }
 
   // add relations to the relation select
-
-
+  var pathfinder_relations = document.getElementById('pathfinder-relations');
+  for (const [relation_id, relation] of Object.entries(ontology_data['relations'])){
+    var option = document.createElement("option");
+    option.value = relation_id;
+    option.text = relation.name;
+    pathfinder_relations.appendChild(option);
+  }
 
 </script>
 
@@ -114,13 +138,18 @@
       sorter: data => data.sort((a, b) => a.text.localeCompare(b.text)),
     });
 
-    
+    $('#pathfinder-relations').select2({
+      placeholder: "All relations",
+      allowClear: true,
+      sorter: data => data.sort((a, b) => a.text.localeCompare(b.text)),
+    });
+
+    $('#all-relations-pathfinder-checkbox').click(function() {
+      toggle_checkbox('pathfinder-relations', 'all-relations-pathfinder-checkbox');
+    });
+
     $('#pathfinder-relations').change(function() {
       uncheck_all_checkbox('pathfinder-relations', 'all-relations-pathfinder-checkbox');
-      debounce(fetch_pathfinder_predicates());
-    });
-    $('#pathfinder-predicates').change(function() {
-      uncheck_all_checkbox('pathfinder-predicates', 'all-predicates-pathfinder-checkbox');
     });
     $('#pathfinder-start-concept').change(function() {
       uncheck_all_checkbox('pathfinder-start-concept', 'all-concept-pathfinder-start-checkbox');
@@ -137,6 +166,16 @@
       uncheck_all_checkbox('pathfinder-end-instance', 'all-instance-pathfinder-end-checkbox');
     });
 
+    // Toggle end instance dropdown based on checkbox
+    $('#pathfinder-find-all').change(function() {
+      if ($(this).is(':checked')) {
+        $('#pathfinder-end-instance-container').hide();
+        $('#pathfinder-end-instance').prop('disabled', true);
+      } else {
+        $('#pathfinder-end-instance-container').show();
+        $('#pathfinder-end-instance').prop('disabled', false);
+      }
+    });
 
     $('#find-pathfinder-btn').on('click', function() {
       find_instance_path();
@@ -156,13 +195,82 @@
       }
       cell_data += '</ul>';
       $('#modelpathfinder-container').html(cell_data);
+    } else {
+      $('#modelpathfinder-container').html('<p class="text-muted">{% trans "No path found" %}</p>');
     }
+  }
+
+  function build_pathfinder_multi_results(results) {
+    let html = '';
+
+    if (results.truncated) {
+      html += '<div class="alert alert-warning">{% trans "Showing" %} ' +
+              Object.keys(results.paths).length + ' {% trans "of" %} ' +
+              results.total_found + ' {% trans "instances" %}</div>';
+    }
+
+    html += '<h5>{% trans "Paths to" %} ' + results.concept_name + '</h5>';
+
+    // Split into connected and not connected
+    const connected = [], notConnected = [];
+    for (const [id, path] of Object.entries(results.paths)) {
+      const inst = results.target_instances[id];
+      if (path) {
+        connected.push({inst, path});
+      } else {
+        notConnected.push({inst});
+      }
+    }
+
+    // Render connected instances with their paths
+    if (connected.length > 0) {
+      html += '<h6 class="text-success">{% trans "Connected" %} (' + connected.length + ')</h6>';
+      for (const {inst, path} of connected) {
+        html += '<div class="mb-3 p-2 border rounded"><strong><a href="' + inst.url + '">' + inst.name + '</a></strong>';
+        html += '<ul class="mb-0">';
+        for (const slot of path) {
+          html += '<li><strong>' + slot.subject + '</strong> ' + slot.relation + ' <strong>' + slot.object + '</strong></li>';
+        }
+        html += '</ul></div>';
+      }
+    }
+
+    // Render not connected instances
+    if (notConnected.length > 0) {
+      html += '<h6 class="text-muted mt-3">{% trans "No path found" %} (' + notConnected.length + ')</h6>';
+      html += '<ul class="text-muted">';
+      for (const {inst} of notConnected) {
+        html += '<li><a href="' + inst.url + '" class="text-muted">' + inst.name + '</a></li>';
+      }
+      html += '</ul>';
+    }
+
+    if (connected.length === 0 && notConnected.length === 0) {
+      html += '<p class="text-muted">{% trans "No instances of this concept found" %}</p>';
+    }
+
+    $('#modelpathfinder-container').html(html);
   }
 
   async function find_instance_path() {
       const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+      const findAll = $('#pathfinder-find-all').is(':checked');
       modify_pathfinder_buttons('disable');
       $("#find-pathfinder-btn").attr("disabled", true);
+
+      const requestData = {
+        'model_id': modelId,
+        'start_instance_id': $('#pathfinder-start-instance').val(),
+        'relation_ids': $('#pathfinder-relations').val(),
+        'find_all_of_concept': findAll
+      };
+
+      if (findAll) {
+        requestData['end_concept_id'] = $('#pathfinder-end-concept').val();
+      } else {
+        requestData['end_instance_id'] = $('#pathfinder-end-instance').val();
+      }
+
       try {
           const result_data = await $.ajax({
               url: '/o_model/' + modelId +'/pathfinder/',
@@ -170,14 +278,14 @@
               headers: {'X-CSRFToken': csrftoken},
               contentType : 'application/json',
               success: function (result) {
-                build_pathfinder_results(result);
+                if (findAll) {
+                  build_pathfinder_multi_results(result);
+                } else {
+                  build_pathfinder_results(result);
+                }
                 $("#find-pathfinder-btn").attr("disabled", false);
               },
-              data: JSON.stringify({
-                'model_id': modelId, 
-                'start_instance_id': $('#pathfinder-start-instance').val(),
-                'end_instance_id': $('#pathfinder-end-instance').val()
-              })
+              data: JSON.stringify(requestData)
           });
           modify_pathfinder_buttons('enable');
           return result_data;

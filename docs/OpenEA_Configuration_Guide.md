@@ -232,6 +232,30 @@ dot -V
 - Find all paths between two instances
 - Relationship-based connection discovery
 - Traceability chains
+- Optional relation filter for targeted analysis
+- Multi-target mode to find paths to all instances of a concept
+
+**Usage:**
+
+1. **Start**: Select a concept and instance as the starting point
+2. **End**: Either select a specific instance, or check "Find all instances of this concept" to discover all connected instances
+3. **Relations Filter** (optional): Select one or more relations to filter the search
+
+**Relation Filter Behavior:**
+
+The relation filter applies to the **first edge only** from the start instance. This matches common EA analysis patterns:
+
+| Question | Filter | Behavior |
+|----------|--------|----------|
+| "What does IFMIS **depend on**?" | dependsOn | First edge must be "dependsOn", then traces full path |
+| "What does this app **support**?" | supports | First edge must be "supports", then traces downstream |
+| "What organizations use IFMIS?" | (none) | Finds all paths regardless of relation types |
+
+**Example:**
+
+- **Query**: IFMIS → OrganisationUnit with "dependsOn" filter
+- **Path found**: IFMIS → *dependsOn* → GamPay → *realizes* → Service → *ownedBy* → Ministry
+- The first edge (dependsOn) matches the filter; subsequent edges can use any relation
 
 ---
 
