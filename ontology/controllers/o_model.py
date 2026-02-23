@@ -225,14 +225,72 @@ class ModelUtils:
             return None
         
 
-    def find_paths(start_instance, end_instance):
+    def find_paths(start_instance, end_instance, relation_ids=None):
         paths = []
-        q = KnowledgeBaseUtils.get_instances_paths(start_instance=start_instance, end_instance=end_instance)
+        q = KnowledgeBaseUtils.get_instances_paths(
+            start_instance=start_instance,
+            end_instance=end_instance,
+            relation_ids=relation_ids
+        )
         while not q.empty():
             best_path = q.get()
             paths.append([ModelUtils.slot_to_dict(x) for x in best_path[1]])
         return paths
-    
+
+    def find_paths_to_concept(start_instance, end_concept, max_results=50, relation_ids=None):
+        """Find paths from one instance to ALL instances of a target concept.
+
+        Args:
+            start_instance: The starting OInstance
+            end_concept: The target OConcept type
+            max_results: Maximum number of target instances to search (default 50)
+            relation_ids: Optional set of relation IDs to filter paths by.
+
+        Returns:
+            dict: Contains paths, target_instances, truncated flag, total_found count, and concept_name
+        """
+        # Get target instances of the specified concept (excluding start instance)
+        target_query = OInstance.objects.filter(
+            concept=end_concept,
+            model=start_instance.model
+        ).exclude(id=start_instance.id)
+
+        total_count = target_query.count()
+        target_instances = list(target_query[:max_results])
+
+        # Use optimized multi-target BFS
+        paths_by_target = KnowledgeBaseUtils.get_instances_paths_to_multiple(
+            start_instance=start_instance,
+            end_instances=target_instances,
+            relation_ids=relation_ids
+        )
+
+        results = {
+            'paths': {},
+            'target_instances': {},
+            'truncated': total_count > max_results,
+            'total_found': total_count,
+            'concept_name': end_concept.name
+        }
+
+        for target in target_instances:
+            instance_id = str(target.id)
+            results['target_instances'][instance_id] = {
+                'id': target.id,
+                'name': target.name,
+                'code': target.code,
+                'description': target.description,
+                'concept_id': target.concept.id,
+                'concept': target.concept.name,
+                'url': ModelUtils.get_url('instance', target.id)
+            }
+            if target.id in paths_by_target:
+                results['paths'][instance_id] = [ModelUtils.slot_to_dict(x) for x in paths_by_target[target.id]]
+            else:
+                results['paths'][instance_id] = None
+
+        return results
+
     def analyze_impact(root_instance, predicate_ids, level):
         return KnowledgeBaseUtils.get_related_instances(root_instance, predicate_ids, level)
     

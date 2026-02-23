@@ -4,7 +4,12 @@ from authorization.models import AccessPermission, Permission, SecurityGroup
 from ontology.models import (OConcept, OInstance, OModel, OPredicate,
                              ORelation, OReport, OSlot, Repository)
 from organisation.models import Organisation, Profile, Task
-from payment.controllers.products import populate_products
+
+try:
+    from payment.controllers.products import populate_products
+except ImportError:
+    def populate_products():
+        pass
 
 User = get_user_model()
 
