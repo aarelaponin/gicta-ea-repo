@@ -460,12 +460,35 @@ python manage.py remove_deleted
 ### 11.2 Ontology Commands
 
 ```bash
-# Populate Gambia metamodel
+# Populate Gambia metamodel (40 concepts, 28 relations, 70+ predicates)
 python manage.py populate_gambia_metamodel --org <org_name>
+
+# Populate AS-IS architecture data (133 instances, 143 relationships)
+python manage.py populate_gambia_asis --org <org_name>
+
+# Dry-run mode (preview what would be created)
+python manage.py populate_gambia_asis --org <org_name> --dry-run
+
+# Verbose output (detailed logging)
+python manage.py populate_gambia_asis --org <org_name> --verbose
 
 # Initialize application
 python manage.py app_init
 ```
+
+**AS-IS Architecture Data (populate_gambia_asis):**
+
+| Category | Count | Examples |
+|----------|-------|----------|
+| OrganisationUnit | 19 | MoFEA, GRA, MoH, MoCDE + departments |
+| Application | 27 | IFMIS, GamPay, DHIS2, GamTax Net, ASYCUDA, eCRVS, MyGov |
+| TechnologyComponent | 15 | SQL Server, PostgreSQL, ACE Cable, Data Centres |
+| Vendor | 16 | Epicor, TechBiz, UNCTAD, WCC Group, OrangeBD |
+| BusinessProcess | 17 | Budget Management, Tax Administration, Health Delivery |
+| BusinessService | 7 | Tax Filing, Government Payment, Birth Certificate |
+| Capability | 12 | Financial Management, Revenue Collection, Digital Identity |
+| DataEntity | 10 | Taxpayer Records, Health Records, Civil Registration |
+| Project | 10 | WARDIP, GEHSSP, MyGov Development, NDAS |
 
 ### 11.3 Enterprise Architecture Commands
 
@@ -643,19 +666,25 @@ MAX_LENGTH_GRAPH_NODE_TEXT = 50
    python manage.py populate_gambia_metamodel --org myorg
    ```
 
-3. **Create Repository** → `/repository/create/`
+3. **Populate AS-IS Architecture** (optional - for Gambia EA)
+   ```bash
+   python manage.py populate_gambia_asis --org myorg
+   ```
+   This creates 133 instances based on the D5 AS-IS Architecture document.
 
-4. **Create Model** → `/model/create/` (within repository)
+4. **Create Repository** → `/repository/create/`
 
-5. **Define/Import Concepts** → Use populated metamodel or create custom
+5. **Create Model** → `/model/create/` (within repository)
 
-6. **Create Instances** → Add actual data records
+6. **Define/Import Concepts** → Use populated metamodel or create custom
 
-7. **Add Slots** → Define property values
+7. **Create Instances** → Add actual data records
 
-8. **Visualize** → Graph view, Impact Analysis
+8. **Add Slots** → Define property values
 
-9. **Export** → JSON/Excel/XML for sharing
+9. **Visualize** → Graph view, Impact Analysis
+
+10. **Export** → JSON/Excel/XML for sharing
 
 ---
 
