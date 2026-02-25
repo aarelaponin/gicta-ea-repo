@@ -185,25 +185,80 @@ dot -V
 
 **Features:**
 - SVG output format
-- Filter by knowledge set (ontology vs instances)
+- Two viewing modes: Simplified and Advanced
+- Role-based presets for different architect perspectives
+- BDAT layer filtering (Business, Data, Application, Technology)
+- Organizational scope filtering
 - Interactive node exploration
 - Clickable nodes linking to detail pages
 
-**How to Use:**
+#### Simplified Mode (Default)
 
-1. Navigate to the model detail page
-2. Click the **Graph** tab
-3. **For Ontology Graph** (shows concepts and relationships):
-   - Check the **Relations** checkbox (selects all relationship types)
-   - Check the **Predicates** checkbox (selects relationship rules)
-   - Click **"Generate Ontology Graph"**
-4. **For Instances Graph** (shows actual data):
-   - Optionally select specific **Concepts** to filter
-   - Check the **Instances** checkbox
-   - Click **"Generate Instances Graph"**
-5. Click **"Download Graph"** to save as SVG
+The Simplified mode is designed for TOGAF-trained Enterprise Architects with an intuitive interface:
 
-**Note:** You must select at least some filters before generating. Empty selections produce no graph.
+| Control | Description |
+|---------|-------------|
+| **Architect View** | Select your role: Enterprise, Business, Application, Data, or Technology Architect |
+| **Architecture Layers** | Toggle BDAT layers: Business, Application, Data, Technology |
+| **Organizational Scope** | Filter by organizational unit (e.g., Ministry of Finance) |
+| **Include subordinate units** | Include child organizations in scope |
+| **Display Mode** | Context View (shows connections) or Strict Layer Filter (layer items only) |
+
+**How to Use Simplified Mode:**
+
+1. Navigate to the model detail page and click **Graph** tab
+2. Ensure **Simplified** mode is selected (default)
+3. Select an **Architect View** (e.g., Application Architect)
+   - This auto-selects the appropriate architecture layers
+4. Optionally adjust **Architecture Layers** checkboxes
+5. Optionally select an **Organizational Scope** to filter by ownership
+6. Choose **Display Mode**:
+   - **Context View**: Shows selected items plus their connections to other layers
+   - **Strict Layer Filter**: Shows only items from selected layers
+7. Click **"Generate Architecture Diagram"**
+
+**Display Mode Behavior:**
+
+| Mode | Selected Layer | Shows |
+|------|----------------|-------|
+| Context View | Application | Applications + connected Business Processes, Data Entities, etc. |
+| Strict Layer Filter | Application | Only Applications (no cross-layer items) |
+| Strict + Org Scope | Data | Data Entities connected to the org unit's Applications |
+
+#### Advanced Mode
+
+The Advanced mode provides full control with EA-friendly terminology:
+
+| Panel | Label | Description |
+|-------|-------|-------------|
+| **1** | Element Types | Types of architecture building blocks (formerly "Concepts") |
+| **2** | Relationship Types | How elements connect to each other (formerly "Relations") |
+| **3** | Structures | Valid relationship patterns (formerly "Predicates") |
+| **4** | Elements | Actual items in your architecture (formerly "Instances") |
+
+**How to Use Advanced Mode:**
+
+1. Click **Advanced** to switch modes
+2. Select **Element Types** (what to show)
+3. Select **Relationship Types** (how things connect)
+4. **Structures** auto-populate based on selections
+5. **Elements** auto-populate based on structures
+6. Click **"Generate Ontology Graph"** or **"Generate Elements Graph"**
+
+#### Organizational Scope Filtering
+
+When an organizational scope is selected, the graph filters to show only architecture elements owned by that organization:
+
+- **Direct Ownership**: Elements directly owned by the selected org unit
+- **Subordinate Units**: When checked, includes elements owned by child organizations
+- **Transitive Filtering**: For non-Application layers with Strict mode, finds elements connected to the org unit's Applications
+
+**Example:**
+- Select "Ministry of Finance" + "Data" layer + "Strict Layer Filter"
+- Shows: Data Entities used by Ministry of Finance's Applications
+- Does NOT show: Unrelated Data Entities or Applications themselves
+
+**Note:** If no results appear, it may mean no elements of the selected type are connected to that organization's systems.
 
 ### 4.2 Impact Analysis
 
@@ -597,6 +652,15 @@ python manage.py loaddata db.json
 | `/configuration/create/` | Create configuration |
 | `/configuration/<id>/` | Configuration detail |
 | `/configuration/<id>/rebuild/` | Rebuild from metamodel |
+| `/configuration/graph_presets/<org_id>/` | Graph presets configuration |
+| `/configuration/graph_presets/<org_id>/reset/` | Reset presets to defaults |
+
+### 12.4 Graph Presets API URLs
+
+| URL Pattern | Method | Description |
+|-------------|--------|-------------|
+| `/o_model/<model_id>/presets/` | GET | Get graph presets for model's organization |
+| `/o_model/<model_id>/org_units/` | GET | Get organizational units from model |
 
 ---
 
@@ -658,7 +722,121 @@ python manage.py collectstatic
 
 ---
 
-## 15. Configuration Examples
+## 15. Graph Presets Administration
+
+### 15.1 Overview
+
+Graph Presets allow administrators to configure default selections for the Graph visualization based on architect roles and TOGAF/BDAT architecture layers.
+
+**URL:** `/configuration/graph_presets/<organisation_id>/`
+
+### 15.2 Architect Roles
+
+Default architect role presets are provided:
+
+| Role | Display Name | Default Element Types | Default Relations |
+|------|--------------|----------------------|-------------------|
+| `enterprise_architect` | Enterprise Architect | All types | All relations |
+| `business_architect` | Business Architect | Business Process, Capability, Service, Business Function, Value Stream | realizes, supports, uses |
+| `application_architect` | Application Architect | Application, Application Component, Interface, Application Service, System | dependsOn, uses, realizes, contains, supports, manages, replaces |
+| `data_architect` | Data Architect | Data Entity, Data Object, Data Domain, Information Flow | uses, flowsTo, contains, manages |
+| `technology_architect` | Technology Architect | Technology Component, Server, Network, Platform, Infrastructure, Hardware | hosts, connectedTo, dependsOn, contains, manages |
+
+### 15.3 Architecture Layers (BDAT)
+
+| Layer | Display Name | Element Types |
+|-------|--------------|---------------|
+| `business` | Business Layer | Business Process, Capability, Business Service, Business Function, Value Stream, Workflow |
+| `application` | Application Layer | Application, Application Component, Application Service, Interface, System, Software |
+| `data` | Data Layer | Data Entity, Data Object, Data Domain, Information Flow, Database |
+| `technology` | Technology Layer | Technology Component, Server, Network, Platform, Infrastructure, Hardware, Location |
+
+### 15.4 Customizing Presets
+
+**Via Admin UI:**
+1. Navigate to `/configuration/graph_presets/<org_id>/`
+2. Expand role or layer accordions to view settings
+3. Use **Raw JSON Editor** for advanced configuration
+4. Click **Save Configuration**
+
+**Auto-Map from Model:**
+1. Select a model from the dropdown
+2. Click **Auto-Map Concepts**
+3. Concepts are automatically assigned to layers based on naming patterns
+
+**Reset to Defaults:**
+1. Click **Reset to Defaults** button
+2. Confirm the action
+
+### 15.5 Preset JSON Schema
+
+```json
+{
+  "roles": {
+    "role_id": {
+      "display_name": "Role Display Name",
+      "description": "Role description",
+      "default_concepts": ["Concept Name 1", "Concept Name 2"],
+      "default_relations": ["relation-name-1", "relation-name-2"]
+    }
+  },
+  "layers": {
+    "layer_id": {
+      "display_name": "Layer Display Name",
+      "concepts": ["Concept Name 1", "Concept Name 2"]
+    }
+  },
+  "org_unit_config": {
+    "concept_name": "Organisation Unit",
+    "ownership_relation": "ownedBy"
+  }
+}
+```
+
+### 15.6 Organizational Unit Configuration
+
+The `org_unit_config` section defines how organizational scope filtering works:
+
+| Setting | Description | Default |
+|---------|-------------|---------|
+| `concept_name` | Concept name for org units | "Organisation Unit" |
+| `ownership_relation` | Relation indicating ownership | "ownedBy" |
+
+Elements are considered "owned by" an org unit when there's a slot: `Element ownedBy OrgUnit`
+
+### 15.7 Adding Custom Roles
+
+**Via API:**
+```bash
+curl -X POST /configuration/graph_presets/<org_id>/role/custom_role/ \
+  -H "Content-Type: application/json" \
+  -d '{
+    "display_name": "Custom Architect",
+    "description": "Custom role description",
+    "default_concepts": ["Concept1", "Concept2"],
+    "default_relations": ["relation1", "relation2"]
+  }'
+```
+
+**Via JSON Editor:**
+Add a new entry under `roles` in the Raw JSON Editor.
+
+---
+
+## 16. Terminology Reference
+
+The Graph UI uses EA-friendly terminology:
+
+| Ontology Term | EA Term | Description |
+|---------------|---------|-------------|
+| Concept | Element Type | Types of architecture building blocks |
+| Relation | Relationship Type | How elements connect to each other |
+| Predicate | Structure | Valid relationship patterns (Subject-Relation-Object) |
+| Instance | Element | Actual items in your architecture |
+
+---
+
+## 17. Configuration Examples
 
 ### 15.1 Development Configuration
 
@@ -742,7 +920,7 @@ MAX_LENGTH_GRAPH_NODE_TEXT = 50
 
 ---
 
-## 17. Troubleshooting
+## 18. Troubleshooting
 
 ### Common Issues
 
@@ -753,20 +931,26 @@ MAX_LENGTH_GRAPH_NODE_TEXT = 50
 | SQLite constraint warnings | Safe to ignore for development |
 | Graph generation 500 error | Install Graphviz: `brew install graphviz` (macOS) or `apt-get install graphviz` (Linux) |
 | Graph button does nothing | Select filters first (Relations, Predicates, Instances) before clicking Generate |
+| Empty graph with org scope | No elements of selected type connected to that org unit's systems. Try Context View or different layer. |
+| Empty graph with strict filter | No relationships exist between items of selected layer. Try Context View to see cross-layer connections. |
+| Presets not matching | Concept names in presets must match model concepts. Use Auto-Map or check exact names. |
+| "add_segment: error" in console | Graphviz rendering issue - usually means graph data is empty or has orphan references |
 | Slots causing errors | Ensure slots have predicates linked (run `populate_gambia_asis` after `populate_gambia_metamodel`) |
 | Package build failures (Python 3.13) | Upgrade packages (pillow>=10.4, psycopg2-binary>=2.9.9, lxml>=5.0, Markdown>=3.5) |
 
 ---
 
-## 18. Key Configuration Points
+## 19. Key Configuration Points
 
 1. **Metamodel** - Use `populate_gambia_metamodel` or API for custom concepts
-2. **Reports** - Create OReport objects with HTML/JS templates
-3. **Import/Export** - Extend plugin system for custom formats
-4. **Permissions** - Define SecurityGroups with AccessPermissions
-5. **Visualizations** - Adjust MAX_GRAPH_NODES for complexity
-6. **Multi-tenancy** - Create Organisations and assign Profiles
-7. **API** - Use REST/GraphQL for programmatic access
-8. **Languages** - Add locale files for additional languages
-9. **Email** - Configure SMTP for notifications
-10. **Database** - Switch to PostgreSQL for production
+2. **Graph Presets** - Configure architect roles and BDAT layers at `/configuration/graph_presets/`
+3. **Reports** - Create OReport objects with HTML/JS templates
+4. **Import/Export** - Extend plugin system for custom formats
+5. **Permissions** - Define SecurityGroups with AccessPermissions
+6. **Visualizations** - Adjust MAX_GRAPH_NODES for complexity; use Simplified mode for TOGAF architects
+7. **Multi-tenancy** - Create Organisations and assign Profiles
+8. **Org Scope Filtering** - Define `ownedBy` relationships to enable organizational filtering in graphs
+9. **API** - Use REST/GraphQL for programmatic access
+10. **Languages** - Add locale files for additional languages
+11. **Email** - Configure SMTP for notifications
+12. **Database** - Switch to PostgreSQL for production

@@ -31,6 +31,10 @@ from ontology.views.o_model.o_model_import import ModelImportView
 from ontology.views.o_model.o_model_json import OModelJSONFilterView
 from ontology.views.o_model.o_model_json_list import OModelJSONListView
 from ontology.views.o_model.o_model_pathfinder import OModelPathFinderView
+from ontology.views.o_model.o_model_presets import (
+    OModelPresetsView, OModelPresetsUpdateView,
+    OModelOrgUnitsView, OModelOrgUnitInstancesView
+)
 from ontology.views.o_report.o_report_create import OReportCreateView
 from ontology.views.o_report.o_report_delete import OReportDeleteView
 from ontology.views.o_report.o_report_detail import OReportDetailView
@@ -101,6 +105,10 @@ urlpatterns = [
     path('o_model/<uuid:model_id>/copy/', OModelCopyView.as_view(), name='o_model_copy'),
     path('o_model/<uuid:model_id>/import', ModelImportView.as_view(), name='o_model_import'),
     path('o_model/<uuid:model_id>/export', ModelExportView.as_view(), name='o_model_export'),
+    path('o_model/<uuid:model_id>/presets/', OModelPresetsView.as_view(), name='o_model_presets'),
+    path('o_model/<uuid:model_id>/presets/update/', OModelPresetsUpdateView.as_view(), name='o_model_presets_update'),
+    path('o_model/<uuid:model_id>/org_units/', OModelOrgUnitsView.as_view(), name='o_model_org_units'),
+    path('o_model/<uuid:model_id>/org_units/<uuid:org_unit_id>/instances/', OModelOrgUnitInstancesView.as_view(), name='o_model_org_unit_instances'),
 
     path('model_report/<uuid:model_id>/', ReportView.as_view(), name='model_report'),
     path('xml_report/<uuid:model_id>/', XMLReportView.as_view(), name='xml_report'),

@@ -70,18 +70,46 @@ class ModelUtils:
         if target == 'concepts':
             return filtered_data
 
-        filtered_data['predicates'] = OPredicate.objects.filter(model=model, relation__in=filtered_data['relations'], subject__in=filtered_data['concepts'], object__in=filtered_data['concepts']).order_by('subject__name').order_by('relation__name').order_by('object__name')
-        if isinstance(predicate_ids, list):
-            filtered_data['predicates'] = filtered_data['predicates'].filter(id__in=predicate_ids)
+        # If predicate_ids are explicitly provided, use them directly
+        # Otherwise, filter by concepts and relations
+        if isinstance(predicate_ids, list) and len(predicate_ids) > 0:
+            filtered_data['predicates'] = OPredicate.objects.filter(model=model, id__in=predicate_ids).order_by('subject__name').order_by('relation__name').order_by('object__name')
+        else:
+            filtered_data['predicates'] = OPredicate.objects.filter(model=model, relation__in=filtered_data['relations'], subject__in=filtered_data['concepts'], object__in=filtered_data['concepts']).order_by('subject__name').order_by('relation__name').order_by('object__name')
         if target == 'predicates':
             return filtered_data
 
-        filtered_data['instances'] = OInstance.objects.filter(model=model, concept__in=filtered_data['concepts']).order_by('name')
-        if filtered_data['predicates']:
-            available_concept_ids = set([x.subject.id for x in filtered_data['predicates']] + [x.object.id for x in filtered_data['predicates']])
-            filtered_data['instances'] = filtered_data['instances'].filter(concept_id__in=available_concept_ids)
-        if isinstance(instance_ids, list):
-            filtered_data['instances'] = filtered_data['instances'].filter(id__in=instance_ids)
+        # If instance_ids are explicitly provided, use them directly
+        if isinstance(instance_ids, list) and len(instance_ids) > 0:
+            filtered_data['instances'] = OInstance.objects.filter(model=model, id__in=instance_ids).order_by('name')
+        else:
+            # Check if we should filter by selected concepts only (for simplified mode)
+            filter_by_selected_concepts = data.get('filter_by_selected_concepts', False)
+
+            if filter_by_selected_concepts and filtered_data['concepts']:
+                # Filter instances to only include selected concept types
+                # This prevents "Application supports BusinessProcess" from including BusinessProcess instances
+                filtered_data['instances'] = OInstance.objects.filter(
+                    model=model,
+                    concept__in=filtered_data['concepts']
+                ).order_by('name')
+            elif filtered_data['predicates']:
+                # Get all instances that could participate in the selected predicates
+                # This includes both subject and object concepts from predicates
+                available_concept_ids = set()
+                for pred in filtered_data['predicates']:
+                    available_concept_ids.add(pred.subject.id)
+                    available_concept_ids.add(pred.object.id)
+                filtered_data['instances'] = OInstance.objects.filter(
+                    model=model,
+                    concept_id__in=available_concept_ids
+                ).order_by('name')
+            else:
+                # Fall back to filtering by selected concepts
+                filtered_data['instances'] = OInstance.objects.filter(
+                    model=model,
+                    concept__in=filtered_data['concepts']
+                ).order_by('name')
         if target == 'instances':
             return filtered_data
         

@@ -5,64 +5,157 @@
 
 <div class="container">
   <div class="border p-3">
-    <div class="row">
-      <div class="col-sm">
-        <div>
-          <dl>
-            <dt>
-              {% trans "Relations" %} <input id="all-relations-checkbox" type="checkbox"/>
-            </dt>
-            <dd>
-              <select id="graph-relations" multiple="multiple" class="custom-select2" style="width: 100%"></select>
-            </dd>
-          </dl>
-
-          <dl>
-            <dt>
-              {% trans "Concepts" %} <input id="all-concepts-checkbox" type="checkbox"/>
-            </dt>
-            <dd>
-              <select id="graph-concepts" multiple="multiple" class="custom-select2" style="width: 100%"></select>
-            </dd>
-          </dl>
+    <!-- Mode Toggle -->
+    <div class="row mb-3">
+      <div class="col-12">
+        <div class="btn-group" role="group" aria-label="{% trans 'View Mode' %}">
+          <input type="radio" class="btn-check" name="view-mode" id="view-mode-simplified" value="simplified" checked>
+          <label class="btn btn-outline-primary" for="view-mode-simplified">{% trans "Simplified" %}</label>
+          <input type="radio" class="btn-check" name="view-mode" id="view-mode-advanced" value="advanced">
+          <label class="btn btn-outline-primary" for="view-mode-advanced">{% trans "Advanced" %}</label>
         </div>
       </div>
-      <div class="col-lg">
-        <div>
-          <dl>
-            <dt>
-              {% trans "Predicates" %} <input id="all-predicates-checkbox" type="checkbox"/>
-            </dt>
-            <dd>
-              <select id="graph-predicates" multiple="multiple" class="custom-select2" style="width: 100%"></select>
-            </dd>
-          </dl>
-
-          <dl>
-            <dt>
-              {% trans "Instances" %} <input id="all-instances-checkbox" type="checkbox"/>
-            </dt>
-            <dd>
-              <select id="graph-instances" multiple="multiple" class="custom-select2" style="width: 100%"></select>
-            </dd>
-          </dl>
-
-        </div>
-      </div>
-      
     </div>
-    <div class="text-center">
-      <input id="generate-ontology-graph-btn" class="btn btn-primary" type="button" value="{% trans 'Generate Ontology Graph' %}" /> 
-      <input id="generate-instances-graph-btn" class="btn btn-primary" type="button" value="{% trans 'Generate Instances Graph' %}" />
-      <input id="download-graph-btn" class="btn btn-primary" type="button" value="{% trans 'Download Graph' %}" />
+
+    <!-- Simplified Mode Panel -->
+    <div id="simplified-mode-panel">
+      <div class="row mb-3">
+        <div class="col-md-4">
+          <label for="architect-role" class="form-label fw-bold">{% trans "Architect View" %}</label>
+          <select id="architect-role" class="form-select">
+            <option value="">{% trans "Select a role..." %}</option>
+            <option value="enterprise_architect">{% trans "Enterprise Architect" %}</option>
+            <option value="business_architect">{% trans "Business Architect" %}</option>
+            <option value="application_architect">{% trans "Application Architect" %}</option>
+            <option value="data_architect">{% trans "Data Architect" %}</option>
+            <option value="technology_architect">{% trans "Technology Architect" %}</option>
+          </select>
+        </div>
+        <div class="col-md-4">
+          <label class="form-label fw-bold">{% trans "Architecture Layers" %}</label>
+          <div class="btn-group d-flex flex-wrap" role="group" aria-label="{% trans 'Architecture Layers' %}">
+            <input type="checkbox" class="btn-check" id="layer-business" value="business">
+            <label class="btn btn-outline-secondary btn-sm" for="layer-business">{% trans "Business" %}</label>
+            <input type="checkbox" class="btn-check" id="layer-application" value="application">
+            <label class="btn btn-outline-secondary btn-sm" for="layer-application">{% trans "Application" %}</label>
+            <input type="checkbox" class="btn-check" id="layer-data" value="data">
+            <label class="btn btn-outline-secondary btn-sm" for="layer-data">{% trans "Data" %}</label>
+            <input type="checkbox" class="btn-check" id="layer-technology" value="technology">
+            <label class="btn btn-outline-secondary btn-sm" for="layer-technology">{% trans "Technology" %}</label>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <label for="org-unit-scope" class="form-label fw-bold">{% trans "Organizational Scope" %}</label>
+          <select id="org-unit-scope" class="form-select">
+            <option value="">{% trans "All Units" %}</option>
+          </select>
+          <div class="form-check mt-2">
+            <input class="form-check-input" type="checkbox" id="include-subordinates" checked>
+            <label class="form-check-label" for="include-subordinates">
+              {% trans "Include subordinate units" %}
+            </label>
+          </div>
+        </div>
+      </div>
+      <div class="row mb-3">
+        <div class="col-12">
+          <label class="form-label fw-bold">{% trans "Display Mode" %}</label>
+          <div class="btn-group" role="group" aria-label="{% trans 'Display Mode' %}">
+            <input type="radio" class="btn-check" name="display-mode" id="display-mode-context" value="context" checked>
+            <label class="btn btn-outline-secondary btn-sm" for="display-mode-context" title="{% trans 'Show selected items and everything they connect to' %}">
+              {% trans "Context View" %}
+            </label>
+            <input type="radio" class="btn-check" name="display-mode" id="display-mode-strict" value="strict">
+            <label class="btn btn-outline-secondary btn-sm" for="display-mode-strict" title="{% trans 'Only show items from selected layers' %}">
+              {% trans "Strict Layer Filter" %}
+            </label>
+          </div>
+          <small class="text-muted ms-2" id="display-mode-help">{% trans "Shows connections to other layers" %}</small>
+        </div>
+      </div>
+      <div class="text-center">
+        <input id="generate-simplified-graph-btn" class="btn btn-primary btn-lg" type="button" value="{% trans 'Generate Architecture Diagram' %}" />
+      </div>
+    </div>
+
+    <!-- Advanced Mode Panel -->
+    <div id="advanced-mode-panel" style="display: none;">
+      <div class="row">
+        <!-- Column 1: Element Types and Relationship Types -->
+        <div class="col-md-6">
+          <div class="card mb-3">
+            <div class="card-header bg-light">
+              <span class="badge bg-primary me-2">1</span>
+              <strong>{% trans "Element Types" %}</strong>
+              <small class="text-muted ms-2">{% trans "(what to show)" %}</small>
+              <input id="all-concepts-checkbox" type="checkbox" class="form-check-input ms-2" title="{% trans 'Select All' %}"/>
+            </div>
+            <div class="card-body">
+              <select id="graph-concepts" multiple="multiple" class="custom-select2" style="width: 100%"></select>
+            </div>
+          </div>
+
+          <div class="card mb-3">
+            <div class="card-header bg-light">
+              <span class="badge bg-primary me-2">2</span>
+              <strong>{% trans "Relationship Types" %}</strong>
+              <small class="text-muted ms-2">{% trans "(how things connect)" %}</small>
+              <input id="all-relations-checkbox" type="checkbox" class="form-check-input ms-2" title="{% trans 'Select All' %}"/>
+            </div>
+            <div class="card-body">
+              <select id="graph-relations" multiple="multiple" class="custom-select2" style="width: 100%"></select>
+            </div>
+          </div>
+        </div>
+
+        <!-- Column 2: Structures and Elements -->
+        <div class="col-md-6">
+          <div class="card mb-3">
+            <div class="card-header bg-light">
+              <span class="badge bg-primary me-2">3</span>
+              <strong>{% trans "Structures" %}</strong>
+              <small class="text-muted ms-2">{% trans "(valid combinations)" %}</small>
+              <input id="all-predicates-checkbox" type="checkbox" class="form-check-input ms-2" title="{% trans 'Select All' %}"/>
+            </div>
+            <div class="card-body">
+              <select id="graph-predicates" multiple="multiple" class="custom-select2" style="width: 100%"></select>
+            </div>
+          </div>
+
+          <div class="card mb-3">
+            <div class="card-header bg-light">
+              <span class="badge bg-primary me-2">4</span>
+              <strong>{% trans "Elements" %}</strong>
+              <small class="text-muted ms-2">{% trans "(actual items)" %}</small>
+              <input id="all-instances-checkbox" type="checkbox" class="form-check-input ms-2" title="{% trans 'Select All' %}"/>
+            </div>
+            <div class="card-body">
+              <select id="graph-instances" multiple="multiple" class="custom-select2" style="width: 100%"></select>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="text-center">
+        <input id="generate-ontology-graph-btn" class="btn btn-primary" type="button" value="{% trans 'Generate Ontology Graph' %}" />
+        <input id="generate-instances-graph-btn" class="btn btn-primary" type="button" value="{% trans 'Generate Elements Graph' %}" />
+      </div>
+    </div>
+
+    <!-- Download button (common to both modes) -->
+    <div class="text-center mt-3">
+      <input id="download-graph-btn" class="btn btn-outline-secondary" type="button" value="{% trans 'Download Graph' %}" />
     </div>
   </div>
 
-    <div id="modelgraph-container" class="text-center" max-width="100%"></div>
+  <div id="modelgraph-container" class="text-center" max-width="100%"></div>
 </div>
 {% csrf_token %}
 
 <script type="text/javascript">
+  // Store presets data (will be loaded from server)
+  var graphPresets = null;
+  var orgUnits = [];
 
   // add concepts to the concept select
   var graphConcepts = document.getElementById('graph-concepts');
@@ -92,10 +185,472 @@
     if (action == 'disable'){
       $("#generate-ontology-graph-btn").attr("disabled", true);
       $("#generate-instances-graph-btn").attr("disabled", true);
+      $("#generate-simplified-graph-btn").attr("disabled", true);
     }else{
       $("#generate-ontology-graph-btn").attr("disabled", false);
       $("#generate-instances-graph-btn").attr("disabled", false);
+      $("#generate-simplified-graph-btn").attr("disabled", false);
     }
+  }
+
+  function toggleViewMode(mode) {
+    if (mode === 'simplified') {
+      $('#simplified-mode-panel').show();
+      $('#advanced-mode-panel').hide();
+    } else {
+      $('#simplified-mode-panel').hide();
+      $('#advanced-mode-panel').show();
+    }
+  }
+
+  // Apply preset based on role and layers
+  function applyPreset(roleId, layers) {
+    if (!graphPresets || !graphPresets.roles || !graphPresets.roles[roleId]) {
+      return;
+    }
+
+    var preset = graphPresets.roles[roleId];
+    var conceptNames = [];
+    var relationNames = [];
+
+    // Collect concepts from the selected role preset
+    if (preset.default_concepts) {
+      conceptNames = conceptNames.concat(preset.default_concepts);
+    }
+
+    // Also add concepts from selected layers
+    if (layers && graphPresets.layers) {
+      layers.forEach(function(layerId) {
+        if (graphPresets.layers[layerId] && graphPresets.layers[layerId].concepts) {
+          conceptNames = conceptNames.concat(graphPresets.layers[layerId].concepts);
+        }
+      });
+    }
+
+    // Add relations from preset
+    if (preset.default_relations) {
+      relationNames = relationNames.concat(preset.default_relations);
+    }
+
+    // Select matching concepts
+    $('#graph-concepts option').each(function() {
+      var optionText = $(this).text().toLowerCase();
+      var shouldSelect = conceptNames.some(function(name) {
+        return optionText.indexOf(name.toLowerCase()) !== -1;
+      });
+      $(this).prop('selected', shouldSelect);
+    });
+    $('#graph-concepts').trigger('change');
+
+    // Select matching relations
+    $('#graph-relations option').each(function() {
+      var optionText = $(this).text().toLowerCase();
+      var shouldSelect = relationNames.some(function(name) {
+        return optionText.indexOf(name.toLowerCase()) !== -1;
+      });
+      $(this).prop('selected', shouldSelect);
+    });
+    $('#graph-relations').trigger('change');
+  }
+
+  // Load presets from server
+  function loadPresets() {
+    const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+    $.ajax({
+      url: '/o_model/' + modelId + '/presets/',
+      type: 'GET',
+      headers: {'X-CSRFToken': csrftoken},
+      success: function(result) {
+        graphPresets = result;
+        console.log('Presets loaded:', graphPresets);
+      },
+      error: function(error) {
+        console.log('Presets not available, using default selections');
+        // Use default fallback presets
+        graphPresets = getDefaultPresets();
+      }
+    });
+  }
+
+  // Default presets when server presets are not available
+  function getDefaultPresets() {
+    return {
+      roles: {
+        enterprise_architect: {
+          display_name: "Enterprise Architect",
+          default_layers: ["business", "application", "data", "technology"],
+          default_concepts: [],
+          default_relations: []
+        },
+        business_architect: {
+          display_name: "Business Architect",
+          default_layers: ["business"],
+          default_concepts: ["Business Process", "Capability", "Service", "Business Function", "Value Stream", "Strategy", "BusinessProcess", "BusinessService"],
+          default_relations: ["realizes", "supports", "enables", "owns", "performs"]
+        },
+        application_architect: {
+          display_name: "Application Architect",
+          default_layers: ["application"],
+          default_concepts: ["Application", "Interface", "Application Component", "Application Service", "ApplicationComponent", "ApplicationService", "ApplicationFunction"],
+          default_relations: ["dependsOn", "depends-on", "uses", "realizes", "contains", "supports", "manages", "replaces"]
+        },
+        data_architect: {
+          display_name: "Data Architect",
+          default_layers: ["data"],
+          default_concepts: ["Data Entity", "Data Object", "Database", "Data Service", "DataEntity", "DataObject"],
+          default_relations: ["stores", "manages", "accesses", "transforms", "uses"]
+        },
+        technology_architect: {
+          display_name: "Technology Architect",
+          default_layers: ["technology"],
+          default_concepts: ["Technology", "Infrastructure", "Platform", "Server", "Network", "TechnologyComponent", "TechnologyService"],
+          default_relations: ["hosts", "runs-on", "deployed-on", "supports", "provides"]
+        }
+      },
+      layers: {
+        business: {
+          concepts: ["Business Process", "Capability", "Service", "Business Function", "Organisation Unit", "Strategy", "BusinessProcess", "BusinessService", "BusinessFunction"]
+        },
+        application: {
+          concepts: ["Application", "Interface", "Application Component", "ApplicationComponent", "ApplicationService", "ApplicationFunction"]
+        },
+        data: {
+          concepts: ["Data Entity", "Data Object", "Database", "DataEntity", "DataObject", "DataService"]
+        },
+        technology: {
+          concepts: ["Technology", "Infrastructure", "Platform", "Server", "TechnologyComponent", "TechnologyService"]
+        }
+      }
+    };
+  }
+
+  // Load organizational units for scope filter
+  function loadOrgUnits() {
+    const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+    $.ajax({
+      url: '/o_model/' + modelId + '/org_units/',
+      type: 'GET',
+      headers: {'X-CSRFToken': csrftoken},
+      success: function(result) {
+        orgUnits = result.org_units || [];
+        populateOrgUnitSelector();
+      },
+      error: function(error) {
+        console.log('Org units not available');
+      }
+    });
+  }
+
+  // Populate organizational unit selector
+  function populateOrgUnitSelector() {
+    var $select = $('#org-unit-scope');
+    $select.empty();
+    $select.append('<option value="">' + '{% trans "All Units" %}' + '</option>');
+
+    orgUnits.forEach(function(unit) {
+      var indent = '  '.repeat(unit.level || 0);
+      $select.append('<option value="' + unit.id + '">' + indent + unit.name + '</option>');
+    });
+  }
+
+  // Generate graph in simplified mode
+  function generateSimplifiedGraph() {
+    var roleId = $('#architect-role').val();
+    var layers = [];
+
+    // Get selected layers
+    $('input[id^="layer-"]:checked').each(function() {
+      layers.push($(this).val());
+    });
+
+    // Get org unit scope
+    var orgUnitId = $('#org-unit-scope').val();
+
+    // If no role or layers selected, show a message
+    if (!roleId && layers.length === 0) {
+      alert('Please select an Architect View or at least one Architecture Layer.');
+      return;
+    }
+
+    // Apply preset selections and then generate graph
+    applyPresetSelectionsAndGenerate(roleId, layers, orgUnitId);
+  }
+
+  // Apply preset selections and generate graph when ready
+  function applyPresetSelectionsAndGenerate(roleId, layers, orgUnitId) {
+    if (!graphPresets) {
+      graphPresets = getDefaultPresets();
+    }
+
+    var conceptNames = [];
+    var relationNames = [];
+    var isEnterpriseArchitect = (roleId === 'enterprise_architect');
+    var displayMode = $('input[name="display-mode"]:checked').val() || 'context';
+    var isStrictMode = (displayMode === 'strict');
+
+    // In strict mode, ONLY use concepts from selected layers (ignore role's default concepts)
+    // In context mode, use both role concepts and layer concepts
+    if (!isStrictMode) {
+      // Collect from role preset (only in context mode)
+      if (roleId && graphPresets.roles && graphPresets.roles[roleId]) {
+        var preset = graphPresets.roles[roleId];
+        if (preset.default_concepts && preset.default_concepts.length > 0) {
+          conceptNames = conceptNames.concat(preset.default_concepts);
+        }
+        if (preset.default_relations && preset.default_relations.length > 0) {
+          relationNames = relationNames.concat(preset.default_relations);
+        }
+      }
+    } else {
+      // In strict mode, still get relations from role for connecting layer items
+      if (roleId && graphPresets.roles && graphPresets.roles[roleId]) {
+        var preset = graphPresets.roles[roleId];
+        if (preset.default_relations && preset.default_relations.length > 0) {
+          relationNames = relationNames.concat(preset.default_relations);
+        }
+      }
+    }
+
+    // Collect from layers (always)
+    if (layers && graphPresets.layers) {
+      layers.forEach(function(layerId) {
+        if (graphPresets.layers[layerId] && graphPresets.layers[layerId].concepts) {
+          conceptNames = conceptNames.concat(graphPresets.layers[layerId].concepts);
+        }
+      });
+    }
+
+    console.log('Display mode:', displayMode, 'Strict:', isStrictMode);
+
+    // Make names unique
+    conceptNames = [...new Set(conceptNames)];
+    relationNames = [...new Set(relationNames)];
+
+    console.log('Looking for concepts:', conceptNames);
+    console.log('Looking for relations:', relationNames);
+    console.log('Is Enterprise Architect:', isEnterpriseArchitect);
+
+    var conceptIds = [];
+    var matchedConcepts = [];
+    var relationIds = [];
+    var matchedRelations = [];
+
+    // For Enterprise Architect with all layers, select all concepts and relations
+    if (isEnterpriseArchitect && layers.length >= 4) {
+      console.log('Enterprise Architect mode: selecting all concepts and relations');
+      $('#graph-concepts option').each(function() {
+        conceptIds.push($(this).val());
+        matchedConcepts.push($(this).text());
+      });
+      $('#graph-relations option').each(function() {
+        relationIds.push($(this).val());
+        matchedRelations.push($(this).text());
+      });
+    } else {
+      // Select matching concepts
+      $('#graph-concepts option').each(function() {
+        var optionText = $(this).text().toLowerCase();
+        var matches = conceptNames.some(function(name) {
+          return optionText.indexOf(name.toLowerCase()) !== -1 ||
+                 name.toLowerCase().indexOf(optionText) !== -1;
+        });
+        if (matches) {
+          conceptIds.push($(this).val());
+          matchedConcepts.push($(this).text());
+        }
+      });
+
+      console.log('Matched concepts:', matchedConcepts);
+
+      // If no concepts matched, try a more lenient match
+      if (conceptIds.length === 0) {
+        console.log('No concepts matched preset. Available concepts:');
+        $('#graph-concepts option').each(function() {
+          console.log('  -', $(this).text());
+        });
+
+        // Fallback: select concepts that contain layer keywords
+        var layerKeywords = layers.map(l => l.toLowerCase());
+        if (roleId) {
+          layerKeywords.push(roleId.replace('_architect', '').toLowerCase());
+        }
+
+        $('#graph-concepts option').each(function() {
+          var optionText = $(this).text().toLowerCase();
+          var matches = layerKeywords.some(function(keyword) {
+            return optionText.indexOf(keyword) !== -1;
+          });
+          if (matches) {
+            conceptIds.push($(this).val());
+            matchedConcepts.push($(this).text());
+          }
+        });
+        console.log('Fallback matched concepts:', matchedConcepts);
+      }
+
+      // Select matching relations - normalize by removing hyphens for comparison
+      // e.g., "depends-on" should match "dependsOn"
+      $('#graph-relations option').each(function() {
+        var optionText = $(this).text().toLowerCase().replace(/-/g, '');
+        var matches = relationNames.some(function(name) {
+          var normalizedName = name.toLowerCase().replace(/-/g, '');
+          return optionText.indexOf(normalizedName) !== -1 ||
+                 normalizedName.indexOf(optionText) !== -1;
+        });
+        if (matches) {
+          relationIds.push($(this).val());
+          matchedRelations.push($(this).text());
+        }
+      });
+
+      console.log('Matched relations:', matchedRelations);
+
+      // If no relations matched, select all relations
+      if (relationIds.length === 0) {
+        console.log('No relations matched preset, selecting all relations');
+        $('#graph-relations option').each(function() {
+          relationIds.push($(this).val());
+        });
+      }
+    }
+
+    $('#graph-concepts').val(conceptIds);
+    $('#graph-relations').val(relationIds);
+
+    // Update predicates synchronously
+    update_graph_predicates();
+
+    // Select all predicates that appeared
+    $('#graph-predicates option').prop('selected', true);
+
+    // Get predicate IDs after updating
+    var predicateIds = $('#graph-predicates').val() || [];
+    console.log('Selected predicates:', predicateIds.length);
+
+    // If no predicates, the graph will be empty - let's make sure we have some
+    if (predicateIds.length === 0) {
+      console.log('No predicates selected, selecting all available predicates');
+      $('#graph-predicates option').each(function() {
+        predicateIds.push($(this).val());
+      });
+      $('#graph-predicates').val(predicateIds);
+    }
+
+    console.log('Final predicate count:', predicateIds.length);
+
+    // Now fetch instances and then generate graph
+    // IMPORTANT: We need to filter instances to only include selected concepts
+    // Otherwise we get instances of all concepts in predicates (e.g., BusinessProcess from "Application supports BusinessProcess")
+    var filter_data = {
+      'target': 'instances',
+      'model_id': modelId,
+      'concept_ids': conceptIds,  // Only fetch instances of selected concepts
+      'relation_ids': relationIds,
+      'predicate_ids': predicateIds,
+      'instance_ids': null,
+      'filter_by_selected_concepts': true  // New flag to filter instances by concept
+    };
+
+    const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+
+    $.ajax({
+      url: '/o_model/filter/' + modelId + '/json',
+      type: 'POST',
+      headers: {'X-CSRFToken': csrftoken},
+      contentType: 'application/json',
+      data: JSON.stringify(filter_data),
+      success: function(result) {
+        // Update instances dropdown
+        var $instances_select = $("#graph-instances");
+        $instances_select.empty();
+        var instanceIds = [];
+        for (var i = 0; i < result['instances'].length; i++) {
+          $instances_select.append('<option value="' + result['instances'][i].id + '" selected>' + result['instances'][i].name + '</option>');
+          instanceIds.push(result['instances'][i].id);
+        }
+
+        console.log('Found', instanceIds.length, 'instances of selected concepts');
+
+        // Debug: show what we're sending to the graph endpoint
+        console.log('Generating graph with:', {
+          concepts: conceptIds.length,
+          relations: relationIds.length,
+          predicates: predicateIds.length,
+          instances: instanceIds.length
+        });
+
+        // Now generate the graph with all selections ready
+        getModelGraphData('instances', orgUnitId);
+      },
+      error: function(error) {
+        console.error('Error fetching instances:', error);
+        // Try generating anyway
+        getModelGraphData('instances', orgUnitId);
+      }
+    });
+  }
+
+  // Keep the old function for Advanced mode preset application
+  function applyPresetSelections(roleId, layers) {
+    if (!graphPresets) {
+      graphPresets = getDefaultPresets();
+    }
+
+    var conceptNames = [];
+    var relationNames = [];
+
+    if (roleId && graphPresets.roles && graphPresets.roles[roleId]) {
+      var preset = graphPresets.roles[roleId];
+      if (preset.default_concepts) {
+        conceptNames = conceptNames.concat(preset.default_concepts);
+      }
+      if (preset.default_relations) {
+        relationNames = relationNames.concat(preset.default_relations);
+      }
+    }
+
+    if (layers && graphPresets.layers) {
+      layers.forEach(function(layerId) {
+        if (graphPresets.layers[layerId] && graphPresets.layers[layerId].concepts) {
+          conceptNames = conceptNames.concat(graphPresets.layers[layerId].concepts);
+        }
+      });
+    }
+
+    conceptNames = [...new Set(conceptNames)];
+    relationNames = [...new Set(relationNames)];
+
+    var conceptIds = [];
+    $('#graph-concepts option').each(function() {
+      var optionText = $(this).text().toLowerCase();
+      var matches = conceptNames.some(function(name) {
+        return optionText.indexOf(name.toLowerCase()) !== -1;
+      });
+      if (matches) {
+        conceptIds.push($(this).val());
+      }
+    });
+    $('#graph-concepts').val(conceptIds);
+
+    var relationIds = [];
+    $('#graph-relations option').each(function() {
+      var optionText = $(this).text().toLowerCase();
+      var matches = relationNames.some(function(name) {
+        return optionText.indexOf(name.toLowerCase()) !== -1;
+      });
+      if (matches) {
+        relationIds.push($(this).val());
+      }
+    });
+    $('#graph-relations').val(relationIds);
+
+    update_graph_predicates();
+    fetch_graph_instances(null);
+
+    setTimeout(function() {
+      $('#graph-predicates option').prop('selected', true);
+      $('#graph-instances option').prop('selected', true);
+    }, 500);
   }
 
   $(document).ready(function(){
@@ -117,6 +672,55 @@
       sorter: data => data.sort((a, b) => a.text.localeCompare(b.text)),
     });
 
+    // View mode toggle
+    $('input[name="view-mode"]').change(function() {
+      toggleViewMode($(this).val());
+    });
+
+    // Architect role change - auto-select associated layers
+    $('#architect-role').change(function() {
+      var roleId = $(this).val();
+
+      // Auto-select layers based on role
+      if (roleId && graphPresets && graphPresets.roles && graphPresets.roles[roleId]) {
+        var role = graphPresets.roles[roleId];
+        if (role.default_layers) {
+          // Uncheck all layers first
+          $('input[id^="layer-"]').prop('checked', false);
+          // Check the layers associated with this role
+          role.default_layers.forEach(function(layerId) {
+            $('#layer-' + layerId).prop('checked', true);
+          });
+        }
+      }
+
+      var layers = [];
+      $('input[id^="layer-"]:checked').each(function() {
+        layers.push($(this).val());
+      });
+      applyPreset(roleId, layers);
+    });
+
+    // Layer toggle change
+    $('input[id^="layer-"]').change(function() {
+      var roleId = $('#architect-role').val();
+      var layers = [];
+      $('input[id^="layer-"]:checked').each(function() {
+        layers.push($(this).val());
+      });
+      applyPreset(roleId, layers);
+    });
+
+    // Display mode change - update help text
+    $('input[name="display-mode"]').change(function() {
+      var mode = $(this).val();
+      if (mode === 'context') {
+        $('#display-mode-help').text('{% trans "Shows connections to other layers" %}');
+      } else {
+        $('#display-mode-help').text('{% trans "Only shows items from selected layers" %}');
+      }
+    });
+
     $('#all-concepts-checkbox').click(function() {
         toggle_checkbox('graph-concepts', 'all-concepts-checkbox');
     });
@@ -130,7 +734,7 @@
         toggle_checkbox('graph-instances', 'all-instances-checkbox');
     });
 
-    
+
     $('#graph-relations').change(function() {
       uncheck_all_checkbox('graph-relations', 'all-relations-checkbox');
       debounce(update_graph_predicates());
@@ -152,21 +756,67 @@
     $('#generate-instances-graph-btn').on('click', function() {
       getModelGraphData('instances');
     });
+    $('#generate-simplified-graph-btn').on('click', function() {
+      generateSimplifiedGraph();
+    });
     $("#download-graph-btn").attr("disabled", true);
     $('#download-graph-btn').on('click', function() {
       svgEl = document.getElementById('modelgraph')
       name = 'graph'
       saveSvg(svgEl, name)
     });
+
+    // Load presets and org units
+    loadPresets();
+    loadOrgUnits();
   });
 </script>
 
 <script>
 
-  async function getModelGraphData(knowledge_set) {
+  async function getModelGraphData(knowledge_set, orgUnitId) {
       const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
       modify_graph_buttons('disable');
       $("#download-graph-btn").attr("disabled", true);
+
+      var conceptIds = $('#graph-concepts').val() || [];
+      var relationIds = $('#graph-relations').val() || [];
+      var predicateIds = $('#graph-predicates').val() || [];
+      var instanceIds = $('#graph-instances').val() || [];
+
+      // Build request data
+      var displayMode = $('input[name="display-mode"]:checked').val() || 'context';
+
+      var requestData = {
+        'knowledge_set': knowledge_set,
+        'model_id': modelId,
+        'concept_ids': conceptIds,
+        'relation_ids': relationIds,
+        'predicate_ids': predicateIds,
+        'instance_ids': instanceIds,
+        'display_mode': displayMode,
+        'selected_concept_ids': conceptIds  // Pass selected concepts for strict filtering
+      };
+
+      // Add org unit filter if specified
+      if (orgUnitId) {
+        requestData['org_unit_id'] = orgUnitId;
+        requestData['include_subordinates'] = $('#include-subordinates').is(':checked');
+      }
+
+      console.log('=== GRAPH REQUEST DATA ===');
+      console.log('Knowledge set:', knowledge_set);
+      console.log('Concept IDs:', conceptIds.length, conceptIds);
+      console.log('Relation IDs:', relationIds.length, relationIds);
+      console.log('Predicate IDs:', predicateIds.length, predicateIds);
+      console.log('Instance IDs:', instanceIds.length, instanceIds);
+      console.log('Display Mode:', displayMode);
+      console.log('Selected Concept IDs for strict filter:', conceptIds);
+      if (orgUnitId) {
+        console.log('Org Unit ID:', orgUnitId);
+        console.log('Include Subordinates:', requestData['include_subordinates']);
+      }
+
       try {
           const result_data = await $.ajax({
               url: '/o_model/graph/' + modelId +'/',
@@ -176,15 +826,9 @@
               success: function (result) {
                 $("#modelgraph-container").html(result);
                 $("#download-graph-btn").attr("disabled", false);
+                console.log('Graph response length:', result.length);
               },
-              data: JSON.stringify({
-                'knowledge_set': knowledge_set,
-                'model_id': modelId, 
-                'concept_ids': $('#graph-concepts').val(),
-                'relation_ids': $('#graph-relations').val(),
-                'predicate_ids': $('#graph-predicates').val(),
-                'instance_ids': $('#graph-instances').val()
-              })
+              data: JSON.stringify(requestData)
           });
           modify_graph_buttons('enable');
           return result_data;
@@ -206,12 +850,16 @@
 
   function update_graph_predicates() {
     var new_predicates = {'predicates': []};
-    var selected_predicates = $('#graph-relations').val();
+    var selected_relations = $('#graph-relations').val() || [];
+    console.log('Updating predicates for relations:', selected_relations);
+    console.log('Total predicates in ontology_data:', Object.keys(ontology_data['predicates']).length);
+
     for (const [predicate_id, predicate] of Object.entries(ontology_data['predicates'])){
-      if (selected_predicates.includes(predicate.relation_id)){
+      if (selected_relations.includes(predicate.relation_id)){
         new_predicates['predicates'].push(predicate);
       }
     }
+    console.log('Filtered predicates count:', new_predicates['predicates'].length);
     update_graph_predicates_select_box(new_predicates, {});
   }
 
